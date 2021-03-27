@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/aldolushkja/gohello-web/config"
+	"github.com/aldolushkja/gohello-web/models"
 	"html/template"
 	"log"
 	"net/http"
@@ -19,8 +20,12 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
+func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+	return td
+}
+
 //RenderTemplate renders templates using html/template
-func RenderTemplate(w http.ResponseWriter, tmpl string) {
+func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 
 	var tc map[string]*template.Template
 
@@ -37,7 +42,10 @@ func RenderTemplate(w http.ResponseWriter, tmpl string) {
 	}
 
 	buf := new(bytes.Buffer)
-	_ = t.Execute(buf, nil)
+
+	td = AddDefaultData(td)
+
+	_ = t.Execute(buf, td)
 
 	_, err := buf.WriteTo(w)
 
